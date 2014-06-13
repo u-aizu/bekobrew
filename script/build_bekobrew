@@ -1,0 +1,22 @@
+#!/bin/bash
+
+source config
+
+rm -rf tmp || true
+mkdir -p tmp || true
+erb src/bekobrew.sh > tmp/bekobrew.sh
+chmod +x tmp/bekobrew.sh
+chmod -w tmp/bekobrew.sh
+
+git clone --single-branch -b master git://github.com/u-aizu/bekobrew.git tmp/bekobrew-master
+pushd tmp/bekobrew-master
+
+mkdir -p bin/ || true
+cp ../../tmp/bekobrew.sh bin/bekobrew
+
+git add bin/
+git commit -m "bump version into ${BEKOBREW_VERSION}"
+git tag ${BEKOBREW_VERSION}
+git push --quiet https://${GITHUB_TOKEN}@github.com/u-aizu/bekobrew.git master
+
+popd

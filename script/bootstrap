@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# load config
+source config
+
+if [ "${TRAVIS_REPO_SLUG}" == "sh19910711/bekobrew" ]; then
+  ./script/travis/build_sh19910711
+elif [ "${TRAVIS_REPO_SLUG}" == "u-aizu/bekobrew" ]; then
+  ./script/travis/build_u_aizu
+fi
