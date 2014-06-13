@@ -17,7 +17,7 @@ list = [
 function invoke_subcommand() {
 
 <% list.each do |x| %>
-  function _<%= x %>() { <%= File.read("bekobrew/#{x}.sh") %> }
+  function _<%= x %>() { <%= File.read(File.expand_path("../bekobrew/#{x}.sh", __FILE__)) %> }
 <% end %>
 
   # invoke subcommand: e.g. _makepkg
