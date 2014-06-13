@@ -10,7 +10,7 @@ OPTDIR=bekobrew-<%= ENV['BEKOBREW_VERSION'] %>
 
 mkdir -p ${HOME}/local/opt || true
 cp -r ${OPTDIR}/ ${HOME}/local/opt/
-echo 'export PATH=${HOME}/local/opt/${OPTDIR}/bin:${PATH}' >> ~/.bashrc
+echo 'export PATH=${HOME}/local/opt/'"${OPTDIR}"'/bin:${PATH}' >> ~/.bashrc
 
 popd  # TMPDIR
 
