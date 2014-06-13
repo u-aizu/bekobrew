@@ -17,6 +17,6 @@ cp ../../tmp/bekobrew.sh bin/bekobrew
 git add bin/
 git commit -m "bump version into ${BEKOBREW_VERSION}"
 git tag ${BEKOBREW_VERSION}
-git push --quiet https://${GITHUB_TOKEN}@github.com/u-aizu/bekobrew.git master
+git push --quiet https://${GITHUB_TOKEN}@github.com/u-aizu/bekobrew.git master ${BEKOBREW_VERSION}
 
 popd
