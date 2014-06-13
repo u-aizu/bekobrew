@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Copyright 2013-2014 Hiroyuki Sano.
+#
+# Usage: bekobrew {subcommand} [args...]
+
+
+
+# usage: invoke_subcommand command arg1
+# サブコマンド呼び出し
+function invoke_subcommand() {
+
+
+  function _makepkg() { echo makepkg
+echo $@
+ }
+
+  function _hello() { echo hello
+ }
+
+
+  # invoke subcommand: e.g. _makepkg
+  "_$@"
+}
+
+invoke_subcommand "$@"
+
