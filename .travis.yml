@@ -2,6 +2,7 @@ language: ruby
 rvm:
   - 2.1.*
 script:
-  - secure: "fDDvPhzMpE06hJY0SUX1ScyGqmjvwb2lg/tvEaXCIrALue/bTVXKr11pWEiKuMCKfvS6Dkl9pwxq9lCDs7UgxipQeeQRqmmjVajm7SYbhiLIfZuE1gHo6Rk7CKizm3eo9TR/7KfgCHuTnm9JabqsoH1geRC6s6oSlzalzD63R2c="
-  - secure: "VXFhRp+JYF2SuEv+nJeT+1fM+LosXHb/mzPFMeitArFk/44Q1aw5C/IkIXg7DG/AcfrVRkPgr/j16JkpT6m1qggi7MKroaDQa/azWWQ4WIt+TGWtWWy9KcXDrmYW2VDpv5HjYIImb8rTuML4KI3NYHdnXSo0vhl0rDW333NLCFU="
   - ./script/bootstrap
+env:
+  - secure: "VXFhRp+JYF2SuEv+nJeT+1fM+LosXHb/mzPFMeitArFk/44Q1aw5C/IkIXg7DG/AcfrVRkPgr/j16JkpT6m1qggi7MKroaDQa/azWWQ4WIt+TGWtWWy9KcXDrmYW2VDpv5HjYIImb8rTuML4KI3NYHdnXSo0vhl0rDW333NLCFU="
+  - secure: "fDDvPhzMpE06hJY0SUX1ScyGqmjvwb2lg/tvEaXCIrALue/bTVXKr11pWEiKuMCKfvS6Dkl9pwxq9lCDs7UgxipQeeQRqmmjVajm7SYbhiLIfZuE1gHo6Rk7CKizm3eo9TR/7KfgCHuTnm9JabqsoH1geRC6s6oSlzalzD63R2c="
