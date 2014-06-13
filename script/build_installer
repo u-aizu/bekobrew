@@ -13,7 +13,7 @@ pushd tmp/bekobrew-gh-pages
 
 cp ../../tmp/install.sh install.sh
 git add install.sh
-git commit -m "update installer"
+git commit --allow-empty -m "update installer"
 git push --quiet https://${GITHUB_TOKEN}@github.com/u-aizu/bekobrew.git gh-pages
 
 popd
