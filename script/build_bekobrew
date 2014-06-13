@@ -2,6 +2,8 @@
 
 source config
 
+git push --quiet https://${GITHUB_TOKEN}@github.com/u-aizu/bekobrew.git master:bekobrew
+
 rm -rf tmp || true
 mkdir -p tmp || true
 erb src/bekobrew.sh > tmp/bekobrew.sh
