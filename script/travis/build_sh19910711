@@ -1,18 +1,20 @@
 #!/bin/bash
 
 function build_master() {
-  make bekobrew
-  git clone --single-branch -b master git://github.com/u-aizu/bekobrew.git tmp/bekobrew
+  make publish_bekobrew
 }
 
 function build_installer() {
-  make gh-pages
-  git clone --single-branch -b gh-pages git://github.com/u-aizu/bekobrew.git tmp/gh-pages
+  make publish_installer
+}
+
+function build_gh_pages() {
+  build_installer
 }
 
 case ${TRAVIS_BRANCH} in
 
-"master") build_master && build_installer ;;
+"master") build_master && build_gh_pages ;
 
 esac
 

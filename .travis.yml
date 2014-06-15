@@ -1,10 +1,10 @@
 language: ruby
 rvm:
-  - 2.1.*
+  - 2.1.1
 before_script:
   - git config --global user.email "sh19910711+ynkkowrv0b14@gmail.com"
   - git config --global user.name "Mr. Bot"
 script:
-  - ./script/bootstrap
+  - ./script/travis/bootstrap
 env:
   - secure: "UU0h9u1/dF12ZOAGcCBOo6gWvK7h4rKRtPZjnzWUaUE2TjbQC6DTD7dCPodvD/EIXiLyY5Y45VNcFONKrR8GLDIxu2UKR97u76jpZm92Qm8LqI6pLyipfY5g4Xjsze/DnQ/XmoTqbvx3nO2FhGF18gtPNWvCWM0X/1GZOdFr65M="
