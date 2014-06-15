@@ -1,19 +1,11 @@
 #!/bin/bash
 
+# load config
 source config
 
-rm -rf tmp/ || true
+# build
 mkdir -p tmp/ || true
+rm -f tmp/install.sh || true
 erb src/installer.sh > tmp/install.sh
-chmod +x tmp/install.sh
 chmod -w tmp/install.sh
 
-git clone --single-branch -b gh-pages git://github.com/u-aizu/bekobrew.git tmp/bekobrew-gh-pages
-pushd tmp/bekobrew-gh-pages
-
-cp ../../tmp/install.sh install.sh
-git add install.sh
-git commit --allow-empty -m "update installer"
-git push --quiet https://${GITHUB_TOKEN}@github.com/u-aizu/bekobrew.git gh-pages
-
-popd

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+local bekobrew_dir=tmp/bekobrew-gh-pages
+git clone --single-branch -b gh-pages git://github.com/u-aizu/bekobrew.git ${bekobrew_dir}
+cp tmp/install.sh ${bekobrew_dir}
+pushd ${bekobrew_dir}
+git add install.sh
+git commit --allow-empty -m "update installer"
+git push --quiet https://${GITHUB_TOKEN}@github.com/u-aizu/bekobrew.git gh-pages
+popd
