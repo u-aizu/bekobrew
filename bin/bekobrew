@@ -15,7 +15,8 @@ function invoke_subcommand() {
 echo $@
  }
 
-  function _hello() { echo hello
+  function _hello() { # example
+echo hello
  }
 
 
