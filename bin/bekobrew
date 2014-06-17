@@ -11,10 +11,6 @@
 function invoke_subcommand() {
 
 
-  function _hello() { # example
-echo hello
- }
-
   function _makepkg() { # Usage: makepkg [...]
 
 current_dir=`pwd`
@@ -62,6 +58,10 @@ popd
 
 cp ${tmp_dir}/${archive_file} ${current_dir}/
 rm -rf ${tmp_dir}
+ }
+
+  function _hello() { # example
+echo hello
  }
 
 
