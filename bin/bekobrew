@@ -11,32 +11,6 @@
 function invoke_subcommand() {
 
 
-  function _install() { # Usage: bekobrew install {package-name}
-# e.g. bekobrew install hello
-
-function install_package() {
-  local tmpdir=`mktemp -d`
-  pushd ${tmpdir}
-  bekobrew get $1
-  cd $1
-  source BEKOBUILD
-  bekobrew makepkg
-  bekobrew deploy ${package_name}-${package_version}-${package_release}.tar.bz2
-  popd
-}
-
-install_package $@
-
- }
-
-  function _sync() { mkdir -p ~/.bekobrew || true
-curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
- }
-
-  function _hello() { # example
-echo hello
- }
-
   function _get() { function get_package_info() {
   grep $1 ~/.bekobrew/packages.db
   package_name=`grep $1 ~/.bekobrew/packages.db     | cut -f1`
@@ -71,6 +45,28 @@ function deploy_package() {
 }
 
 deploy_package $1
+
+ }
+
+  function _sync() { mkdir -p ~/.bekobrew || true
+curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
+ }
+
+  function _install() { # Usage: bekobrew install {package-name}
+# e.g. bekobrew install hello
+
+function install_package() {
+  local tmpdir=`mktemp -d`
+  pushd ${tmpdir}
+  bekobrew get $1
+  cd $1
+  source BEKOBUILD
+  bekobrew makepkg
+  bekobrew deploy ${package_name}-${package_version}-${package_release}.tar.bz2
+  popd
+}
+
+install_package $@
 
  }
 
@@ -120,6 +116,13 @@ function makepkg() {
 
   rm -rf ${tmp_dir}
 }
+
+makepkg $@
+
+ }
+
+  function _hello() { # example
+echo hello
  }
 
 
