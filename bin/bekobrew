@@ -11,6 +11,33 @@
 function invoke_subcommand() {
 
 
+  function _sync() { mkdir -p ~/.bekobrew || true
+curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
+ }
+
+  function _get() { function get_package_info() {
+  grep $1 ~/.bekobrew/packages.db
+  package_name=`grep $1 ~/.bekobrew/packages.db     | cut -f1`
+  package_version=`grep $1 ~/.bekobrew/packages.db  | cut -f2`
+  package_release=`grep $1 ~/.bekobrew/packages.db  | cut -f3`
+  package_url=`grep $1 ~/.bekobrew/packages.db      | cut -f4`
+  package_desc=`grep $1 ~/.bekobrew/packages.db     | cut -f5`
+
+  package_fullname=${package_name}-${package_version}-${package_release}
+}
+
+tmpdir=`mktemp -d /tmp/bekobrew-XXXXXX`
+pushd ${tmpdir}
+get_package_info $1
+echo ${package_desc}
+wget --no-check-certificate -c ${package_url}
+tar xvf ${package_fullname}.tar.bz2
+popd
+mkdir -p ./${package_name} || true
+cp ${tmpdir}/${package_name}/BEKOBUILD ./${package_name}/
+rm -rf ${tmpdir}
+ }
+
   function _hello() { # example
 echo hello
  }
@@ -42,7 +69,7 @@ function makepkg() {
 
   # download
   for url in $source; do
-    wget -c $url
+    wget --no-check-certificate -c $url
     [[ "$url" =~ .*\/(.+)$ ]]
     filename=${BASH_REMATCH[1]}
     tar xvf ${filename}
@@ -66,31 +93,18 @@ makepkg $@
 
  }
 
-  function _get() { function get_package_info() {
-  grep $1 ~/.bekobrew/packages.db
-  package_name=`grep $1 ~/.bekobrew/packages.db     | cut -f1`
-  package_version=`grep $1 ~/.bekobrew/packages.db  | cut -f2`
-  package_release=`grep $1 ~/.bekobrew/packages.db  | cut -f3`
-  package_url=`grep $1 ~/.bekobrew/packages.db      | cut -f4`
-  package_desc=`grep $1 ~/.bekobrew/packages.db     | cut -f5`
+  function _deploy() { # Usage: bekobrew deploy {archive-file}
+# e.g. bekobrew deploy hello-2.9-1.tar.bz
 
-  package_fullname=${package_name}-${package_version}-${package_release}
+function deploy_package() {
+  local archive_file=$1
+  local local_dir=${HOME}/local/`uname -s`-`uname -m`
+  mkdir -p ${local_dir} || true
+  tar xvf ${archive_file} -C ${local_dir}
 }
 
-tmpdir=`mktemp -d /tmp/bekobrew-XXXXXX`
-pushd ${tmpdir}
-get_package_info $1
-echo ${package_desc}
-wget -c ${package_url}
-tar xvf ${package_fullname}.tar.bz2
-popd
-mkdir -p ./${package_name} || true
-cp ${tmpdir}/${package_name}/BEKOBUILD ./${package_name}/
-rm -rf ${tmpdir}
- }
+deploy_package $1
 
-  function _sync() { mkdir -p ~/.bekobrew || true
-curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
  }
 
   function _install() { # Usage: bekobrew install {package-name}
@@ -107,20 +121,6 @@ function install_package() {
 }
 
 install_package $@
-
- }
-
-  function _deploy() { # Usage: bekobrew deploy {archive-file}
-# e.g. bekobrew deploy hello-2.9-1.tar.bz
-
-function deploy_package() {
-  local archive_file=$1
-  local local_dir=${HOME}/local/`uname -s`-`uname -m`
-  mkdir -p ${local_dir} || true
-  tar xvf ${archive_file} -C ${local_dir}
-}
-
-deploy_package $1
 
  }
 
