@@ -11,6 +11,10 @@
 function invoke_subcommand() {
 
 
+  function _hello() { # example
+echo hello
+ }
+
   function _makepkg() { # Usage: makepkg [...]
 
 function beko_config() {
@@ -62,10 +66,6 @@ makepkg $@
 
  }
 
-  function _sync() { mkdir -p ~/.bekobrew || true
-curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
- }
-
   function _get() { # Usage: bekobrew get {package name}
 
 function get_package_info() {
@@ -90,6 +90,10 @@ cp ${tmpdir}/${package_name}/BEKOBUILD ./${package_name}/
 rm -rf ${tmpdir}
  }
 
+  function _sync() { mkdir -p ~/.bekobrew || true
+curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
+ }
+
   function _install() { # Usage: bekobrew install {package-name}
 # e.g. bekobrew install hello
 
@@ -98,6 +102,7 @@ function install_package() {
   local package_name=''
   local package_version=''
   local package_release=''
+  local package_depends=()
 
   pushd ${tmpdir}
   bekobrew get $1
@@ -137,10 +142,6 @@ function deploy_package() {
 
 deploy_package $1
 
- }
-
-  function _hello() { # example
-echo hello
  }
 
 
