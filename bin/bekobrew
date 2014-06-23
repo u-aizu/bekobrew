@@ -15,18 +15,101 @@ function invoke_subcommand() {
 echo hello
  }
 
-  function _deploy() { # Usage: bekobrew deploy {archive-file}
-# e.g. bekobrew deploy hello-2.9-1.tar.bz
+  function _makepkg() { # Usage: makepkg [...]
 
-function deploy_package() {
-  local archive_file=$1
-  local local_dir=${HOME}/local/`uname -s`-`uname -m`
-  mkdir -p ${local_dir} || true
-  tar xvf ${archive_file} -C ${local_dir}
+function beko_config() {
+  ./configure --prefix=${HOME}/local/`uname -s`-`uname -m` $@
 }
 
-deploy_package $1
+function is_function() {
+  [[ `type -t $1` == 'function' ]]
+}
 
+function is_http_url() {
+  [[ "$1" =~ ^https?:\/\/ ]]
+}
+
+function is_ftp_url() {
+  [[ "$1" =~ ^ftp:\/\/ ]]
+}
+
+function makepkg() {
+  local current_dir=`pwd`
+
+  shopt -u extglob
+  source ${current_dir}/BEKOBUILD
+  shopt -s extglob
+
+  local tmpdir=`mktemp -d /tmp/bekobrew-XXXXXX`
+  local source_dir=${tmpdir}/source
+  local package_dir=${tmpdir}/package
+
+  pushd ${tmpdir}
+
+  # create source dir
+  mkdir -p "${source_dir}"
+  chmod a-s "${source_dir}"
+
+  cd ${source_dir}
+
+  for item in ${source[@]}; do
+    if is_http_url ${item} || is_ftp_url ${item}; then
+      wget --no-check-certificate -c ${item}
+      [[ "${item}" =~ .*\/(.+)$ ]]
+      filename=${BASH_REMATCH[1]}
+      tar xvf ${filename}
+    else
+      cp ${current_dir}/${item} ${source_dir}
+    fi
+  done
+
+  echo '==> Preparing...'
+  is_function prepare && cd ${current_dir} && prepare
+
+  echo '==> Building...'
+  cd ${current_dir} && build
+
+  echo '==> Checking...'
+  is_function check && cd ${current_dir} && check
+
+  echo '==> Packaging...'
+  cd ${current_dir} && package
+
+  popd
+
+  rm -rf ${tmpdir}
+}
+
+makepkg $@
+
+ }
+
+  function _get() { # Usage: bekobrew get {package name}
+
+function get_package_info() {
+  grep "^$1	" ~/.bekobrew/packages.db
+  package_name=`grep "^$1	" ~/.bekobrew/packages.db     | cut -f1`
+  package_version=`grep "^$1	" ~/.bekobrew/packages.db  | cut -f2`
+  package_release=`grep "^$1	" ~/.bekobrew/packages.db  | cut -f3`
+  package_url=`grep "^$1	" ~/.bekobrew/packages.db      | cut -f4`
+  package_desc=`grep "^$1	" ~/.bekobrew/packages.db     | cut -f5`
+  package_fullname=${package_name}-${package_version}-${package_release}
+}
+
+tmpdir=`mktemp -d /tmp/bekobrew-XXXXXX`
+pushd ${tmpdir}
+get_package_info $1
+echo Download: ${package_fullname}
+wget --no-check-certificate -c ${package_url}
+tar xvf ${package_fullname}.tar.bz2
+popd
+mkdir -p ./${package_name} || true
+cp ${tmpdir}/${package_name}/BEKOBUILD ./${package_name}/
+rm -rf ${tmpdir}
+ }
+
+  function _sync() { mkdir -p ~/.bekobrew || true
+curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
  }
 
   function _install() { # Usage: bekobrew install {package-name}
@@ -65,83 +148,18 @@ install_package $@
 
  }
 
-  function _sync() { mkdir -p ~/.bekobrew || true
-curl https://u-aizu.github.io/bekobrew/packages.db > ~/.bekobrew/packages.db
- }
+  function _deploy() { # Usage: bekobrew deploy {archive-file}
+# e.g. bekobrew deploy hello-2.9-1.tar.bz
 
-  function _makepkg() { # Usage: makepkg [...]
-
-function beko_config() {
-  ./configure --prefix=${HOME}/local/`uname -s`-`uname -m` $@
+function deploy_package() {
+  local archive_file=$1
+  local local_dir=${HOME}/local/`uname -s`-`uname -m`
+  mkdir -p ${local_dir} || true
+  tar xvf ${archive_file} -C ${local_dir}
 }
 
-function makepkg() {
-  local current_dir=`pwd`
+deploy_package $1
 
-  shopt -u extglob
-  source ${current_dir}/BEKOBUILD
-  shopt -s extglob
-
-  local tmpdir=`mktemp -d /tmp/bekobrew-XXXXXX`
-  local source_dir=${tmpdir}/source
-  local package_dir=${tmpdir}/package
-
-  pushd ${tmpdir}
-
-  # create source dir
-  mkdir -p "${source_dir}"
-  chmod a-s "${source_dir}"
-
-  cd ${source_dir}
-
-  # download
-  for url in $source; do
-    wget --no-check-certificate -c $url
-    [[ "$url" =~ .*\/(.+)$ ]]
-    filename=${BASH_REMATCH[1]}
-    tar xvf ${filename}
-  done
-
-  echo '==> Building...'
-  cd ${current_dir} && build
-
-  echo '==> Checking...'
-  cd ${current_dir} && check
-
-  echo '==> Packaging...'
-  cd ${current_dir} && package
-
-  popd
-
-  rm -rf ${tmpdir}
-}
-
-makepkg $@
-
- }
-
-  function _get() { # Usage: bekobrew get {package name}
-
-function get_package_info() {
-  grep "^$1	" ~/.bekobrew/packages.db
-  package_name=`grep "^$1	" ~/.bekobrew/packages.db     | cut -f1`
-  package_version=`grep "^$1	" ~/.bekobrew/packages.db  | cut -f2`
-  package_release=`grep "^$1	" ~/.bekobrew/packages.db  | cut -f3`
-  package_url=`grep "^$1	" ~/.bekobrew/packages.db      | cut -f4`
-  package_desc=`grep "^$1	" ~/.bekobrew/packages.db     | cut -f5`
-  package_fullname=${package_name}-${package_version}-${package_release}
-}
-
-tmpdir=`mktemp -d /tmp/bekobrew-XXXXXX`
-pushd ${tmpdir}
-get_package_info $1
-echo Download: ${package_fullname}
-wget --no-check-certificate -c ${package_url}
-tar xvf ${package_fullname}.tar.bz2
-popd
-mkdir -p ./${package_name} || true
-cp ${tmpdir}/${package_name}/BEKOBUILD ./${package_name}/
-rm -rf ${tmpdir}
  }
 
 
