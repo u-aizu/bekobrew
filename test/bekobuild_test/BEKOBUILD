@@ -1,0 +1,9 @@
+name: fake-package
+
+# comment
+build:
+  - ./configure
+  - make
+
+package:
+  - make install
